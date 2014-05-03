@@ -23,6 +23,7 @@
 - (void)captureTableViewAndScrollBar;
 - (void)constructSubviews;
 - (void)createDateFormatters;
+- (BOOL)hasTableViewAndScrollBar;
 
 @end
 
@@ -63,11 +64,8 @@
 - (void)scrollViewDidScroll
 {
     // Check if necessary views are available
-    if (!_tableView || !_scrollBar){
-        [self captureTableViewAndScrollBar];
-        if(!_scrollBar){
-            return;
-        }
+    if (!self.hasTableViewAndScrollBar){
+        return;
     }
     
     // Set frame
@@ -99,6 +97,14 @@
 
 - (void)scrollViewDidEndDecelerating
 {
+    // Check if necessary views are available
+    if (!self.hasTableViewAndScrollBar){
+        return;
+    }
+    
+    if(CGRectGetMinY(_scrollBar.frame) < 0)
+        return;
+    
     // Add to tableview to slowly fade out
     CGRect newFrame = [_scrollBar convertRect:self.frame toView:_tableView.superview];
     self.frame = newFrame;
@@ -106,18 +112,21 @@
     
     [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState) animations:^{
         self.transform = CGAffineTransformMakeTranslation(CGRectGetMinX(self.frame), 0.0f);
-    } completion:nil];
+    } completion:^(BOOL finished){
+        if([self.superview isEqual:_tableView.superview]){
+             [self removeFromSuperview];
+        }
+    }];
 }
 
 - (void)scrollViewWillBeginDragging
 {
     // Check if necessary views are available
-    if (!_tableView || !_scrollBar){
-        [self captureTableViewAndScrollBar];
-        if(!_scrollBar){
-            return;
-        }
+    if (!self.hasTableViewAndScrollBar){
+        return;
     }
+    
+    [_scrollBar addSubview:self];
     
     // Set frame
     CGFloat newX =  (CGRectGetWidth(self.frame) * -1.f) - CGRectGetWidth(_scrollBar.frame);
@@ -125,7 +134,6 @@
     self.frame = CGRectMake(newX, newY, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
     
     [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState) animations:^{
-        [_scrollBar addSubview:self];
         self.transform = CGAffineTransformIdentity;
     } completion:nil];
 }
@@ -251,7 +259,19 @@
     _dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale currentLocale] localeIdentifier]];
     _dateFormatter.dateStyle = NSDateFormatterShortStyle;
     _dateFormatter.doesRelativeDateFormatting = YES;
+}
 
+- (BOOL)hasTableViewAndScrollBar
+{
+    // Check if necessary views are available
+    if (!_tableView || !_scrollBar){
+        [self captureTableViewAndScrollBar];
+        if(_scrollBar){
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
 @end

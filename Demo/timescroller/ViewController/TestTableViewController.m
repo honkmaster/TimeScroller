@@ -43,13 +43,13 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return arc4random() % 10;
+    return MAX(arc4random() % 10, 1);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return arc4random() % 40;
+    return MAX(arc4random() % 10, 1);
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -60,11 +60,13 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
-    if(!cell)
+    if(!cell){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
     
     cell.textLabel.text = [NSString stringWithFormat:@"Cell with Index %li, %li", (long)indexPath.section, (long)indexPath.row];
-    
+
     // Random color for more demo fun
     CGFloat hue = ( arc4random() % 256 / 256.0 );               //  0.0 to 1.0
     CGFloat saturation = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from white
@@ -73,6 +75,13 @@
     
     return cell;
 }
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    TestTableViewController *viewController = [[TestTableViewController alloc] initWithStyle:UITableViewStylePlain];
+    [self.navigationController pushViewController:viewController animated:YES];
+}
+
 
 #pragma mark - TTTimeScrollerDelegate
 
