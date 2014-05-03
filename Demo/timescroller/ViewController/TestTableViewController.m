@@ -29,8 +29,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.timeScroller = [[TTTimeScroller alloc] initWithDelegate:self];
+    _timeScroller = [[TTTimeScroller alloc] initWithDelegate:self];
 }
 
 - (void)didReceiveMemoryWarning
@@ -44,13 +43,13 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 2;
+    return arc4random() % 10;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 256;
+    return arc4random() % 40;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -66,8 +65,8 @@
     
     cell.textLabel.text = [NSString stringWithFormat:@"Cell with Index %li, %li", (long)indexPath.section, (long)indexPath.row];
     
-    // Random color to demonstrate blur
-    CGFloat hue = ( arc4random() % 256 / 256.0 );  //  0.0 to 1.0
+    // Random color for more demo fun
+    CGFloat hue = ( arc4random() % 256 / 256.0 );               //  0.0 to 1.0
     CGFloat saturation = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from white
     CGFloat brightness = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from black
     cell.backgroundColor = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1];
@@ -93,7 +92,7 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    [self.timeScroller scrollViewDidScroll];
+    [_timeScroller scrollViewDidScroll];
 }
 
 @end

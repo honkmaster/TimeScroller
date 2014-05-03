@@ -40,7 +40,7 @@
         CALayer* maskLayer = [CALayer layer];
         maskLayer.contents = (__bridge id)[[[UIImage imageNamed:@"mask"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 30.0f, 0.0f, 20.0f)] CGImage];
         maskLayer.contentsScale = [UIScreen mainScreen].scale;
-        maskLayer.contentsCenter = CGRectMake(20.0f/100.0f, 0.0f, 60.0f/100.0f, 0.0f);
+        maskLayer.contentsCenter = CGRectMake(30.0f/100.0f, 0.0f, 50.0f/100.0f, 0.0f);
         
         // Apply the mask layer
         self.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.98];
@@ -55,7 +55,7 @@
 
 - (id)initWithDelegate:(id <TTTimeScrollerDelegate>)timeScrollerDelegate;
 {
-    self = [self initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 30.0f)];
+    self = [self initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 30.0f)];
     _timeScrollerDelegate = timeScrollerDelegate;
     return self;
 }
@@ -70,13 +70,10 @@
         }
     }
     
-    CGRect selfFrame = self.frame;
-    CGRect scrollBarFrame = _scrollBar.frame;
-    
     // Set frame
-    CGFloat newX =  CGRectGetWidth(selfFrame) * -1.f;
-    CGFloat newY = CGRectGetHeight(scrollBarFrame) / 2.0f - CGRectGetHeight(selfFrame) / 2.0f;
-    self.frame = CGRectMake(newX, newY, CGRectGetWidth(selfFrame), CGRectGetHeight(selfFrame));
+    CGFloat newX =  (CGRectGetWidth(self.frame) * -1.f) - CGRectGetWidth(_scrollBar.frame);
+    CGFloat newY = CGRectGetHeight(_scrollBar.frame) / 2.0f - CGRectGetHeight(self.frame) / 2.0f;
+    self.frame = CGRectMake(newX, newY, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
     
     // Get date
     CGPoint point = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
@@ -84,52 +81,12 @@
     
     UITableViewCell* cell = [_tableView cellForRowAtIndexPath:[_tableView indexPathForRowAtPoint:point]];
     if (cell) {
+        [self updateDisplayWithCell:cell];
         if (!self.alpha){
             [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState)  animations:^{
                 self.alpha = 1.0f;
             } completion:nil];
         }
-        
-        // Update date
-        NSDate *date = [_timeScrollerDelegate timeScroller:self dateForCell:cell];
-        if (!date || [date isEqualToDate:_lastDate]){
-            return;
-        }
-        if (!_lastDate) {
-            _lastDate = [NSDate date];
-        }
-        
-        NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:date];
-        
-        CGFloat minuteHourAngle = (dateComponents.minute / 60.0f) * 360.0f;
-        CGFloat dateHourAngle = (((dateComponents.hour * 60.0f) + dateComponents.minute) / (24.0f * 60.0f)) * 360.0f;
-        
-        NSString *timeLabelText = [_timeFormatter stringFromDate:date];
-        NSString *dateLabelText = [_dateFormatter stringFromDate:date];
-        
-        CGSize timeLabelTextSize = [timeLabelText sizeWithAttributes:@{NSFontAttributeName : _timeLabel.font}];
-        CGSize dateLabelTextSize = [dateLabelText sizeWithAttributes:@{NSFontAttributeName : _dateLabel.font}];
-        
-        [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowAnimatedContent)  animations:^{
-            // Animate clock rotation
-            _hours.transform = CGAffineTransformMakeRotation(dateHourAngle * (M_PI / 180.0f));
-            _minutes.transform = CGAffineTransformMakeRotation(minuteHourAngle * (M_PI / 180.0f));
-            
-            // Fit size to labels
-            CGFloat maxWidth = MAX(timeLabelTextSize.width, dateLabelTextSize.width);
-            _timeLabel.frame = CGRectMake(CGRectGetMinX(_timeLabel.frame), CGRectGetMinY(_timeLabel.frame), maxWidth, CGRectGetHeight(_timeLabel.frame));
-            _dateLabel.frame = CGRectMake(CGRectGetMinX(_dateLabel.frame), CGRectGetMinY(_dateLabel.frame), maxWidth, CGRectGetHeight(_dateLabel.frame));
-            
-            // Fit frame
-            CGFloat frameWidth = maxWidth + 50.f;
-            self.frame = CGRectMake(frameWidth * -1, 0.0f, frameWidth, CGRectGetHeight(self.frame));
-            self.layer.mask.frame =self.bounds;
-        } completion:^(BOOL finished){
-            _timeLabel.text = timeLabelText;
-            _dateLabel.text = dateLabelText;
-        }];
-        
-        _lastDate = date;
     } else {
         // No cell, thus fade out
         if (self.alpha){
@@ -157,6 +114,53 @@
             }
         }
     }
+    
+    if(_scrollBar){
+        [_scrollBar addSubview:self];
+    }
+}
+
+- (void)updateDisplayWithCell:(UITableViewCell *)cell
+{
+    // Update date
+    NSDate *date = [_timeScrollerDelegate timeScroller:self dateForCell:cell];
+    if (!date || [date isEqualToDate:_lastDate]){
+        return;
+    }
+    if (!_lastDate) {
+        _lastDate = [NSDate date];
+    }
+    
+    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:date];
+    CGFloat minuteHourAngle = (dateComponents.minute / 60.0f) * 360.0f;
+    CGFloat dateHourAngle = (((dateComponents.hour * 60.0f) + dateComponents.minute) / (24.0f * 60.0f)) * 360.0f;
+    
+    NSString *timeLabelText = [_timeFormatter stringFromDate:date];
+    NSString *dateLabelText = [_dateFormatter stringFromDate:date];
+    
+    CGSize timeLabelTextSize = [timeLabelText sizeWithAttributes:@{NSFontAttributeName : _timeLabel.font}];
+    CGSize dateLabelTextSize = [dateLabelText sizeWithAttributes:@{NSFontAttributeName : _dateLabel.font}];
+    
+    [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowAnimatedContent)  animations:^{
+        // Animate clock rotation
+        _hours.transform = CGAffineTransformMakeRotation(dateHourAngle * (M_PI / 180.0f));
+        _minutes.transform = CGAffineTransformMakeRotation(minuteHourAngle * (M_PI / 180.0f));
+        
+        // Fit size to labels
+        CGFloat maxWidth = MAX(timeLabelTextSize.width, dateLabelTextSize.width);
+        _timeLabel.frame = CGRectMake(CGRectGetMinX(_timeLabel.frame), CGRectGetMinY(_timeLabel.frame), maxWidth, CGRectGetHeight(_timeLabel.frame));
+        _dateLabel.frame = CGRectMake(CGRectGetMinX(_dateLabel.frame), CGRectGetMinY(_dateLabel.frame), maxWidth, CGRectGetHeight(_dateLabel.frame));
+        
+        // Fit frame
+        CGFloat frameWidth = maxWidth + 50.f;
+        self.frame = CGRectMake((frameWidth * -1) - CGRectGetWidth(_scrollBar.frame), CGRectGetMinY(self.frame), frameWidth, CGRectGetHeight(self.frame));
+        self.layer.mask.frame = self.bounds;
+    } completion:^(BOOL finished){
+        _timeLabel.text = timeLabelText;
+        _dateLabel.text = dateLabelText;
+    }];
+    
+    _lastDate = date;
 }
 
 - (void)constructSubviews
