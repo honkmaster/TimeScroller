@@ -28,5 +28,7 @@
 - (id)initWithDelegate:(id <TTTimeScrollerDelegate>)timeScrollerDelegate;
 
 - (void)scrollViewDidScroll;
+- (void)scrollViewDidEndDecelerating;
+- (void)scrollViewWillBeginDragging;
 
 @end

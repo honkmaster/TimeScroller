@@ -97,6 +97,39 @@
     }
 }
 
+- (void)scrollViewDidEndDecelerating
+{
+    // Add to tableview to slowly fade out
+    CGRect newFrame = [_scrollBar convertRect:self.frame toView:_tableView.superview];
+    self.frame = newFrame;
+    [_tableView.superview addSubview:self];
+    
+    [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState) animations:^{
+        self.transform = CGAffineTransformMakeTranslation(CGRectGetMinX(self.frame), 0.0f);
+    } completion:nil];
+}
+
+- (void)scrollViewWillBeginDragging
+{
+    // Check if necessary views are available
+    if (!_tableView || !_scrollBar){
+        [self captureTableViewAndScrollBar];
+        if(!_scrollBar){
+            return;
+        }
+    }
+    
+    // Set frame
+    CGFloat newX =  (CGRectGetWidth(self.frame) * -1.f) - CGRectGetWidth(_scrollBar.frame);
+    CGFloat newY = CGRectGetHeight(_scrollBar.frame) / 2.0f - CGRectGetHeight(self.frame) / 2.0f;
+    self.frame = CGRectMake(newX, newY, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
+    
+    [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState) animations:^{
+        [_scrollBar addSubview:self];
+        self.transform = CGAffineTransformIdentity;
+    } completion:nil];
+}
+
 #pragma mark - Helper
 - (void)captureTableViewAndScrollBar
 {

@@ -95,4 +95,14 @@
     [_timeScroller scrollViewDidScroll];
 }
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [_timeScroller scrollViewWillBeginDragging];
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    [_timeScroller scrollViewDidEndDecelerating];
+}
+
 @end
