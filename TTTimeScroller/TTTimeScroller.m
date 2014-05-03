@@ -132,8 +132,8 @@
     }
     
     NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:date];
-    CGFloat minuteHourAngle = (dateComponents.minute / 60.0f) * 360.0f;
-    CGFloat dateHourAngle = (((dateComponents.hour * 60.0f) + dateComponents.minute) / (24.0f * 60.0f)) * 360.0f;
+    CGFloat minuteHourAngle = 180.0f + dateComponents.minute * 6.0f;
+    CGFloat dateHourAngle = 180.0f + 0.5 * (dateComponents.hour * 60.0f);
     
     NSString *timeLabelText = [_timeFormatter stringFromDate:date];
     NSString *dateLabelText = [_dateFormatter stringFromDate:date];
