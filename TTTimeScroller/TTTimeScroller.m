@@ -143,7 +143,9 @@
         _lastDate = [NSDate date];
     }
     
-    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:date];
+    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:date];
+    NSDateComponents *todayComponents = [[NSCalendar currentCalendar] components:NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit fromDate:[NSDate date]];
+    
     CGFloat minuteHourAngle = 180.0f + dateComponents.minute * 6.0f;
     CGFloat dateHourAngle = 180.0f + 0.5 * (dateComponents.hour * 60.0f);
     
@@ -160,16 +162,22 @@
         
         // Fit size to labels
         CGFloat maxWidth = MAX(timeLabelTextSize.width, dateLabelTextSize.width);
-        _timeLabel.frame = CGRectMake(CGRectGetMinX(_timeLabel.frame), CGRectGetMinY(_timeLabel.frame), maxWidth, CGRectGetHeight(_timeLabel.frame));
-        _dateLabel.frame = CGRectMake(CGRectGetMinX(_dateLabel.frame), CGRectGetMinY(_dateLabel.frame), maxWidth, CGRectGetHeight(_dateLabel.frame));
-        
+        if(dateComponents.year == todayComponents.year && dateComponents.month == todayComponents.month && dateComponents.day == todayComponents.day){
+            // Today, thus not necessary to show date
+            _timeLabel.frame = CGRectMake(32.0f, 8.0f, maxWidth, CGRectGetHeight(_timeLabel.frame));
+            _dateLabel.alpha = 0.0f;
+        } else {
+            _timeLabel.frame = CGRectMake(32.0f, 0.0f, maxWidth, CGRectGetHeight(_timeLabel.frame));
+            _dateLabel.frame = CGRectMake(32.0f, 15.0f, maxWidth, CGRectGetHeight(_dateLabel.frame));
+            _dateLabel.alpha = 1.0f;
+        }
         // Fit frame
         CGFloat frameWidth = maxWidth + 50.f;
         self.frame = CGRectMake((frameWidth * -1) - CGRectGetWidth(_scrollBar.frame), CGRectGetMinY(self.frame), frameWidth, CGRectGetHeight(self.frame));
         self.layer.mask.frame = self.bounds;
     } completion:^(BOOL finished){
         _timeLabel.text = timeLabelText;
-        _dateLabel.text = dateLabelText;
+        _dateLabel.text = _dateLabel.alpha ? dateLabelText : @"";
     }];
     
     _lastDate = date;

@@ -49,7 +49,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return MAX(arc4random() % 10, 1);
+    return MAX(arc4random() % 100, 1);
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -93,7 +93,7 @@
 - (NSDate *)timeScroller:(TTTimeScroller *)timeScroller dateForCell:(UITableViewCell *)cell
 {
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-    NSDate *randomDate = [[NSDate date] dateByAddingTimeInterval:indexPath.row * 60 * 10];
+    NSDate *randomDate = [[NSDate date] dateByAddingTimeInterval:indexPath.row * 60 * 60];
     return randomDate;
 }
 
