@@ -33,9 +33,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // If we don't clip to bounds the toolbar draws a thin shadow on top
-        self.clipsToBounds = YES;
-        self.layer.contentsScale = [UIScreen mainScreen].scale;
+        self.backgroundColor = [UIColor colorWithWhite:0.96 alpha:0.96];
         
         // Create mask layer
         CALayer* maskLayer = [CALayer layer];
@@ -44,8 +42,9 @@
         maskLayer.contentsCenter = CGRectMake(30.0f/100.0f, 0.0f, 50.0f/100.0f, 0.0f);
         
         // Apply the mask layer
-        self.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.98];
         self.layer.mask = maskLayer;
+        self.layer.contentsScale = [UIScreen mainScreen].scale;
+        self.layer.masksToBounds = YES;
         
         // Create stuff
         [self constructSubviews];
@@ -97,26 +96,9 @@
 
 - (void)scrollViewDidEndDecelerating
 {
-    // Check if necessary views are available
-    if (!self.hasTableViewAndScrollBar){
-        return;
-    }
-    
-    if(CGRectGetMinY(_scrollBar.frame) < 0)
-        return;
-    
-    // Add to tableview to slowly fade out
-    CGRect newFrame = [_scrollBar convertRect:self.frame toView:_tableView.superview];
-    self.frame = newFrame;
-    [_tableView.superview addSubview:self];
-    
-    [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState) animations:^{
-        self.transform = CGAffineTransformMakeTranslation(CGRectGetMinX(self.frame), 0.0f);
-    } completion:^(BOOL finished){
-        if([self.superview isEqual:_tableView.superview]){
-             [self removeFromSuperview];
-        }
-    }];
+    [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState) animations:^{
+        self.alpha = 0.0f;
+    } completion:nil];
 }
 
 - (void)scrollViewWillBeginDragging
@@ -126,15 +108,8 @@
         return;
     }
     
-    [_scrollBar addSubview:self];
-    
-    // Set frame
-    CGFloat newX =  (CGRectGetWidth(self.frame) * -1.f) - CGRectGetWidth(_scrollBar.frame);
-    CGFloat newY = CGRectGetHeight(_scrollBar.frame) / 2.0f - CGRectGetHeight(self.frame) / 2.0f;
-    self.frame = CGRectMake(newX, newY, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame));
-    
-    [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState) animations:^{
-        self.transform = CGAffineTransformIdentity;
+    [UIView animateWithDuration:0.2f delay:0.0f options:(UIViewAnimationOptionCurveEaseIn | UIViewAnimationOptionBeginFromCurrentState) animations:^{
+        self.alpha = 1.0f;
     } completion:nil];
 }
 
@@ -154,10 +129,6 @@
                 _scrollBar = imageView;
             }
         }
-    }
-    
-    if(_scrollBar){
-        [_scrollBar addSubview:self];
     }
 }
 
@@ -213,6 +184,13 @@
     }
     
     // Clock
+    UIView *border = [[UIView alloc] initWithFrame:CGRectMake(1.0f, 1.0f, 28.0f, 28.0f)];
+    border.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    border.backgroundColor = [UIColor whiteColor];
+    border.layer.borderWidth = 1.0f;
+    border.layer.cornerRadius = 14.0f;
+    [self addSubview:border];
+    
     _hours = [[UIView alloc] initWithFrame:CGRectMake(14.0f, 9.0f, 2.0f, 11.0f)];
     _hours.layer.anchorPoint = CGPointMake(0.5f, 1.0/11.0f);
     _hours.layer.cornerRadius = 1.0;
@@ -228,12 +206,6 @@
     _minutes.layer.contentsScale = [[UIScreen mainScreen] scale];
     _minutes.backgroundColor = tintColor;
     [self addSubview:_minutes];
-    
-    UIView *border = [[UIView alloc] initWithFrame:CGRectMake(1.0f, 1.0f, 28.0f, 28.0f)];
-    border.layer.borderColor = [UIColor blackColor].CGColor;
-    border.layer.borderWidth = 1.0f;
-    border.layer.cornerRadius = 14.0f;
-    [self addSubview:border];
     
     // Label
     _timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(32.0f, 0.0f, 0.0f, 14.0f)];
@@ -266,12 +238,12 @@
     // Check if necessary views are available
     if (!_tableView || !_scrollBar){
         [self captureTableViewAndScrollBar];
-        if(_scrollBar){
-            return YES;
+        if(!_scrollBar){
+            return NO;
         }
     }
     
-    return NO;
+    return YES;
 }
 
 @end
