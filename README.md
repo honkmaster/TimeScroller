@@ -2,7 +2,7 @@
 
 `TimeScroller` is a `UIView` that hovers beside the scroll bar of a `UITableView`. This design paradigma was introduced by [Path](https://itunes.apple.com/us/app/path/id403639508?mt=8). `TimeScroller` was implemented using the least possible external ressources (images, ...). The design is, obviously, ready for iOS 7.
 
-<img src=http://oi57.tinypic.com/2nivdqh.jpg width="320px" />
+<img src=https://i.imgflip.com/8keea.gif width="320px" />
 
 ## Used In
 - Please tell me if you use `TimeScroller` in your App (just submit it as an [issue](https://github.com/honkmaster/TimeScroller/issues))! 
