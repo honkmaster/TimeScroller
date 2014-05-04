@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
                     DESC
   s.homepage     = 'https://github.com/honkmaster/TimeScroller'
   s.authors      = { 'Tobias Tiemerding' => 'http://www.tiemerding.com' }
-  s.source       = { :git => 'https://github.com/honkmaster/TimeScroller.git', :commit => '7a33c08c2157c2b9914097a6651ec79f70aea7ba' }
+  s.source       = { :git => 'https://github.com/honkmaster/TimeScroller.git', :commit => '5f018f415b7aade4ec5da3083f40961fb6bb9faa' }
   s.source_files = 'TTTimeScroller/*.{h,m}'
   s.resources    = 'Assest/mask/*.png'
   s.frameworks   = 'UIKit', 'QuartzCore', 'Foundation'
