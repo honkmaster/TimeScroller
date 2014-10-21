@@ -10,29 +10,29 @@
 	<string>timescroller</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>C8CEF7AB-14DB-4CEE-8E07-494022738DFC</key>
+		<key>B2C7FEBCE55BDB1FCDDABBB25E18EC114CD6695C</key>
 		<string>https://github.com/honkmaster/TimeScroller.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>timescroller.xcodeproj/project.xcworkspace</string>
+	<string>Demo/timescroller.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>C8CEF7AB-14DB-4CEE-8E07-494022738DFC</key>
-		<string>../..</string>
+		<key>B2C7FEBCE55BDB1FCDDABBB25E18EC114CD6695C</key>
+		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/honkmaster/TimeScroller.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>C8CEF7AB-14DB-4CEE-8E07-494022738DFC</string>
+	<string>B2C7FEBCE55BDB1FCDDABBB25E18EC114CD6695C</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>C8CEF7AB-14DB-4CEE-8E07-494022738DFC</string>
+			<string>B2C7FEBCE55BDB1FCDDABBB25E18EC114CD6695C</string>
 			<key>IDESourceControlWCCName</key>
 			<string>TimeScroller</string>
 		</dict>

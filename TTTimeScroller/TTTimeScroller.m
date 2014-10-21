@@ -123,7 +123,7 @@
     for (id subview in [_tableView subviews]){
         if ([subview isKindOfClass:[UIImageView class]]){
             UIImageView *imageView = (UIImageView *)subview;
-            if (imageView.frame.size.width == 7.0f || imageView.frame.size.width == 5.0f || imageView.frame.size.width == 3.5f){
+            if (imageView.frame.size.width == 7.0f || imageView.frame.size.width == 5.0f || imageView.frame.size.width == 3.5f || imageView.frame.size.width == 2.5f){
                 imageView.clipsToBounds = NO;
                 [imageView addSubview:self];
                 _scrollBar = imageView;

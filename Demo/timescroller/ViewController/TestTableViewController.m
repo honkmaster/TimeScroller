@@ -26,10 +26,12 @@
     return self;
 }
 
-- (void)viewDidLoad
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidLoad];
-    _timeScroller = [[TTTimeScroller alloc] initWithDelegate:self];
+    [super viewWillAppear:animated];
+    if(!_timeScroller){
+        _timeScroller = [[TTTimeScroller alloc] initWithDelegate:self];
+    }
 }
 
 - (void)didReceiveMemoryWarning
